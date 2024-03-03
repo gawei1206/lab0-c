@@ -47,6 +47,7 @@ bool q_insert_head(struct list_head *head, char *s)
 
     element_t *node = malloc(sizeof(element_t));
 
+
     if (!node) {
         return false;
     }
