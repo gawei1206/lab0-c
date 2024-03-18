@@ -238,18 +238,18 @@ int q_ascend(struct list_head *head)
     if (list_is_singular(head))
         return 1;
     int cnt = 1;
-    struct list_head *slow = head->next;
-    struct list_head *fast = head->next->next;
+    struct list_head *slow = head->prev;
+    struct list_head *fast = head->prev->prev;
     while (fast != head) {
         element_t *s1 = list_entry(slow, element_t, list);
         element_t *s2 = list_entry(fast, element_t, list);
-        if (strcmp(s1->value, s2->value) > 0) {
+        if (strcmp(s1->value, s2->value) < 0) {
             list_del(&s2->list);
-            fast = slow->next;
+            fast = slow->prev;
         } else {
             cnt++;
-            slow = slow->next;
-            fast = fast->next;
+            slow = slow->prev;
+            fast = fast->prev;
         }
     }
     return cnt;
@@ -265,18 +265,18 @@ int q_descend(struct list_head *head)
     if (list_is_singular(head))
         return 1;
     int cnt = 1;
-    struct list_head *slow = head->next;
-    struct list_head *fast = head->next->next;
+    struct list_head *slow = head->prev;
+    struct list_head *fast = head->prev->prev;
     while (fast != head) {
         element_t *s1 = list_entry(slow, element_t, list);
         element_t *s2 = list_entry(fast, element_t, list);
-        if (strcmp(s1->value, s2->value) < 0) {
+        if (strcmp(s1->value, s2->value) > 0) {
             list_del(&s2->list);
-            fast = slow->next;
+            fast = slow->prev;
         } else {
             cnt++;
-            slow = slow->next;
-            fast = fast->next;
+            slow = slow->prev;
+            fast = fast->prev;
         }
     }
     return cnt;
