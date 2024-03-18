@@ -223,14 +223,36 @@ void q_reverseK(struct list_head *head, int k)
 }
 
 /* Sort elements of queue in ascending/descending order */
-void q_sort(struct list_head *head, bool descend) {}
+void q_sort(struct list_head *head, bool descend)
+{
+    if (!head || list_empty(head) || list_is_singular(head))
+        return;
+}
 
 /* Remove every node which has a node with a strictly less value anywhere to
  * the right side of it */
 int q_ascend(struct list_head *head)
 {
-    // https://leetcode.com/problems/remove-nodes-from-linked-list/
-    return 0;
+    if (!head || list_empty(head))
+        return 0;
+    if (list_is_singular(head))
+        return 1;
+    int cnt = 1;
+    struct list_head *slow = head->next;
+    struct list_head *fast = head->next->next;
+    while (fast != head) {
+        element_t *s1 = list_entry(slow, element_t, list);
+        element_t *s2 = list_entry(fast, element_t, list);
+        if (strcmp(s1->value, s2->value) > 0) {
+            list_del(&s2->list);
+            fast = slow->next;
+        } else {
+            cnt++;
+            slow = slow->next;
+            fast = fast->next;
+        }
+    }
+    return cnt;
 }
 
 /* Remove every node which has a node with a strictly greater value anywhere to
@@ -238,7 +260,26 @@ int q_ascend(struct list_head *head)
 int q_descend(struct list_head *head)
 {
     // https://leetcode.com/problems/remove-nodes-from-linked-list/
-    return 0;
+    if (!head || list_empty(head))
+        return 0;
+    if (list_is_singular(head))
+        return 1;
+    int cnt = 1;
+    struct list_head *slow = head->next;
+    struct list_head *fast = head->next->next;
+    while (fast != head) {
+        element_t *s1 = list_entry(slow, element_t, list);
+        element_t *s2 = list_entry(fast, element_t, list);
+        if (strcmp(s1->value, s2->value) < 0) {
+            list_del(&s2->list);
+            fast = slow->next;
+        } else {
+            cnt++;
+            slow = slow->next;
+            fast = fast->next;
+        }
+    }
+    return cnt;
 }
 
 /* Merge all the queues into one sorted queue, which is in ascending/descending
