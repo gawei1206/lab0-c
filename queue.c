@@ -286,10 +286,11 @@ int q_ascend(struct list_head *head)
     struct list_head *slow = head->prev;
     struct list_head *fast = head->prev->prev;
     while (fast != head) {
-        element_t *s1 = list_entry(slow, element_t, list);
-        element_t *s2 = list_entry(fast, element_t, list);
-        if (strcmp(s1->value, s2->value) < 0) {
-            list_del(&s2->list);
+        element_t *n1 = list_entry(slow, element_t, list);
+        element_t *n2 = list_entry(fast, element_t, list);
+        if (strcmp(n1->value, n2->value) < 0) {
+            list_del(&n2->list);
+            q_release_element(n2);
             fast = slow->prev;
         } else {
             cnt++;
@@ -313,10 +314,11 @@ int q_descend(struct list_head *head)
     struct list_head *slow = head->prev;
     struct list_head *fast = head->prev->prev;
     while (fast != head) {
-        element_t *s1 = list_entry(slow, element_t, list);
-        element_t *s2 = list_entry(fast, element_t, list);
-        if (strcmp(s1->value, s2->value) > 0) {
-            list_del(&s2->list);
+        element_t *n1 = list_entry(slow, element_t, list);
+        element_t *n2 = list_entry(fast, element_t, list);
+        if (strcmp(n1->value, n2->value) > 0) {
+            list_del(&n2->list);
+            q_release_element(n2);
             fast = slow->prev;
         } else {
             cnt++;
