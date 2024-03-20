@@ -222,11 +222,56 @@ void q_reverseK(struct list_head *head, int k)
     // https://leetcode.com/problems/reverse-nodes-in-k-group/
 }
 
+void merge_two_sorted_list(struct list_head *l1,
+                           struct list_head *l2,
+                           bool descend)
+{
+    struct list_head merge;
+    INIT_LIST_HEAD(&merge);
+
+    while (!list_empty(l1) && !list_empty(l2)) {
+        element_t *n1 = list_entry(l1->next, element_t, list);
+        element_t *n2 = list_entry(l2->next, element_t, list);
+
+        if ((strcmp(n1->value, n2->value) > 0 && descend) ||
+            (strcmp(n1->value, n2->value) < 0 && !descend))
+            list_move_tail(&n1->list, &merge);
+        else
+            list_move_tail(&n2->list, &merge);
+    }
+
+    if (list_empty(l1))
+        list_splice_tail(l2, &merge);
+    else
+        list_splice_tail(l1, &merge);
+
+    INIT_LIST_HEAD(l1);
+    INIT_LIST_HEAD(l2);
+
+    list_splice(&merge, l1);
+}
+
 /* Sort elements of queue in ascending/descending order */
 void q_sort(struct list_head *head, bool descend)
 {
     if (!head || list_empty(head) || list_is_singular(head))
         return;
+
+    struct list_head *slow = head, *fast = head, tmp_head;
+    INIT_LIST_HEAD(&tmp_head);
+
+    while (fast->next != head && fast->next->next != head) {
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+
+    list_cut_position(&tmp_head, head, slow);
+
+    q_sort(&tmp_head, descend);
+
+    q_sort(head, descend);
+
+    merge_two_sorted_list(head, &tmp_head, descend);
 }
 
 /* Remove every node which has a node with a strictly less value anywhere to
